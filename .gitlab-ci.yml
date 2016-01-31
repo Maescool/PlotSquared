@@ -1,0 +1,10 @@
+#Just build it.. for other projects to use here
+build:
+  type: build
+  script:
+    - "~/data/servant/serve.sh -t maven build"
+  tags:
+    - java
+    - maven
+  except:
+    - tags
