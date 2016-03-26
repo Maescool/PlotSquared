@@ -1,0 +1,38 @@
+dependencies {
+    compile project(':Core')
+    compile 'org.bukkit:bukkit:1.9-R0.1-SNAPSHOT'
+    compile 'org.mcstats.bukkit:metrics:R7'
+    compile 'net.milkbowl.vault:VaultAPI:1.5'
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+processResources {
+    from('src/main/resources') {
+        include 'plugin.yml'
+        expand(
+            name: project.parent.name,
+            version: project.parent.version
+        )
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+// We only want the shadow jar produced
+jar.enabled = false
+shadowJar {
+    dependencies {
+        include(dependency(':Core'))
+        include(dependency('org.mcstats.bukkit:metrics:R7'))
+    }
+    relocate 'org.mcstats', 'com.plotsquared.stats'
+    archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
+    destinationDir = file '../target'
+}
+shadowJar.doLast {
+    task ->
+    ant.checksum file: task.archivePath
+}
+
+build.dependsOn(shadowJar);
